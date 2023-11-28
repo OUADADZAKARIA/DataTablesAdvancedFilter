@@ -81,75 +81,81 @@
     </table>
 
     <script>
-    $(document).ready(function () {
-    var table = $('#example').DataTable();
-    
-    // Store the original data for later use
-    var originalData = table.rows().data().toArray();
-
-    // Add event listener for the category checkboxes
-    $('.category-filter').on('change', function () {
-        var selectedCategories = $('.category-filter:checked').map(function () {
-            return $(this).val();
-        }).get();
-
-        // Filter the data based on selected categories
-        var filteredData = originalData.filter(function (rowData) {
-            var rowCategories = rowData[6].split(',').map(function (category) {
-                return category.trim();
+        $(document).ready(function () {
+            var table = $('#example').DataTable({
+                "columnDefs": [
+                    {
+                        "targets": [6],
+                        "visible": false
+                    }
+                ]
             });
-            return selectedCategories.every(function (category) {
-                return rowCategories.includes(category);
-            });
-        });
 
-        // Clear the table and add the filtered data
-        table.clear().rows.add(filteredData).draw();
+            // Store the original data for later use
+            var originalData = table.rows().data().toArray();
 
-        // Update the selected filters in the separate div
-        updateSelectedFilters(selectedCategories);
-    });
+            // Add event listener for the category checkboxes
+            $('.category-filter').on('change', function () {
+                var selectedCategories = $('.category-filter:checked').map(function () {
+                    return $(this).val();
+                }).get();
 
-    // Function to update the selected filters in the separate div
-    function updateSelectedFilters(selectedCategories) {
-        var selectedFiltersDiv = $('#selected-filters');
-
-        // Clear previous content
-        selectedFiltersDiv.empty();
-
-        // Display selected filters
-        if (selectedCategories.length > 0) {
-            selectedFiltersDiv.append('<p>Selected Filters: </p>');
-
-            // Add buttons for each selected category
-            selectedCategories.forEach(function (category) {
-                var button = $('<button>').text('Remove ' + category).attr('data-category-value', category);
-                selectedFiltersDiv.append(button);
-
-                // Add event listener for the remove filter button
-                button.on('click', function () {
-                    var categoryValueToRemove = $(this).attr('data-category-value');
-                    // Uncheck the corresponding checkbox
-                    $('.category-filter[value="' + categoryValueToRemove + '"]').prop('checked', false);
-                    // Trigger the change event to update the table
-                    $('.category-filter').trigger('change');
+                // Filter the data based on selected categories
+                var filteredData = originalData.filter(function (rowData) {
+                    var rowCategories = rowData[6].split(',').map(function (category) {
+                        return category.trim();
+                    });
+                    return selectedCategories.every(function (category) {
+                        return rowCategories.includes(category);
+                    });
                 });
+
+                // Clear the table and add the filtered data
+                table.clear().rows.add(filteredData).draw();
+
+                // Update the selected filters in the separate div
+                updateSelectedFilters(selectedCategories);
             });
 
-            // Add a "Clear Filters" button
-            selectedFiltersDiv.append('<button id="clear-filters">Clear Filters</button>');
+            // Function to update the selected filters in the separate div
+            function updateSelectedFilters(selectedCategories) {
+                var selectedFiltersDiv = $('#selected-filters');
 
-            // Add event listener for the clear filters button
-            $('#clear-filters').on('click', function () {
-                // Uncheck all checkboxes
-                $('.category-filter').prop('checked', false);
-                // Trigger the change event to update the table
-                $('.category-filter').trigger('change');
-            });
-        }
-    }
-});
- 
+                // Clear previous content
+                selectedFiltersDiv.empty();
+
+                // Display selected filters
+                if (selectedCategories.length > 0) {
+                    selectedFiltersDiv.append('<p>Selected Filters: </p>');
+
+                    // Add buttons for each selected category
+                    selectedCategories.forEach(function (category) {
+                        var button = $('<button>').text('Remove ' + category).attr('data-category-value', category);
+                        selectedFiltersDiv.append(button);
+
+                        // Add event listener for the remove filter button
+                        button.on('click', function () {
+                            var categoryValueToRemove = $(this).attr('data-category-value');
+                            // Uncheck the corresponding checkbox
+                            $('.category-filter[value="' + categoryValueToRemove + '"]').prop('checked', false);
+                            // Trigger the change event to update the table
+                            $('.category-filter').trigger('change');
+                        });
+                    });
+
+                    // Add a "Clear Filters" button
+                    selectedFiltersDiv.append('<button id="clear-filters">Clear Filters</button>');
+
+                    // Add event listener for the clear filters button
+                    $('#clear-filters').on('click', function () {
+                        // Uncheck all checkboxes
+                        $('.category-filter').prop('checked', false);
+                        // Trigger the change event to update the table
+                        $('.category-filter').trigger('change');
+                    });
+                }
+            }
+        });
     </script>
 
 </body>
